@@ -21,7 +21,7 @@ export function LoveNote() {
     >
       <span className="garden-line mb-1.5 block h-px w-8" aria-hidden />
       <p className="garden-note-ink font-serif text-[1.15rem] italic leading-snug min-[380px]:text-[1.3rem] sm:text-[1.45rem]">
-        İyi ki varsın ❤️
+        İyi ki varsın Diloşum❤️
       </p>
     </motion.aside>
   );
