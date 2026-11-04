@@ -1,26 +1,565 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fbf6f1;
+  --foreground: #4a2e36;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-cormorant), Georgia, "Times New Roman", serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  height: 100%;
+  color-scheme: light;
+  touch-action: manipulation;
 }
 
 body {
-  background: var(--background);
+  min-height: 100%;
+  overflow-x: hidden;
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--background);
+  background-image:
+    radial-gradient(ellipse 72% 54% at 50% 42%, rgba(255, 244, 246, 0.94), transparent 64%),
+    radial-gradient(ellipse 42% 36% at 6% 92%, rgba(210, 226, 208, 0.55), transparent 70%),
+    radial-gradient(ellipse 36% 30% at 96% 4%, rgba(236, 214, 180, 0.45), transparent 72%),
+    linear-gradient(180deg, #fbf7f2 0%, #f8ecee 48%, #f6f1e8 100%);
+}
+
+::selection {
+  background: #f3c9d2;
+  color: #4a2e36;
+}
+
+/*
+ * Halkalar viewBox'ın ortasından ölçeklensin.
+ * Taç yaprakların kendi rotate'u SVG attribute olduğu için bundan etkilenmez.
+ */
+.mum-ring {
+  transform-box: view-box;
+  transform-origin: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* 100vh yedek; destekleyen tarayıcıda adres çubuğu 100dvh ile hesaba katılır. */
+.garden-screen {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.garden-ink {
+  color: #4a2e36;
+  transition: color 1.5s ease;
+}
+
+.garden-ink-soft,
+.garden-note-ink,
+.garden-footer-pill {
+  color: #5e414b;
+  transition: color 1.5s ease, background-color 1.5s ease, border-color 1.5s ease;
+}
+
+.garden-note-ink {
+  color: #5c3d48;
+}
+
+.garden-line {
+  background-color: #e4d2ae;
+  transition: background-color 1.5s ease;
+}
+
+.garden-note {
+  background-color: rgba(255, 250, 244, 0.85);
+  border-color: #eadcc4;
+  transition: background-color 1.5s ease, border-color 1.5s ease;
+}
+
+.garden-footer-pill {
+  color: #5c3d48;
+  background-color: rgba(251, 246, 241, 0.75);
+}
+
+.day-veil,
+.night-veil,
+.night-sky,
+.flower-glow,
+.theme-icon,
+.petal-layer,
+.firefly-layer,
+.moon-glyph {
+  transition: opacity 1.5s ease;
+}
+
+.day-veil {
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 250, 246, 0.9) 0%,
+    rgba(255, 248, 244, 0.5) 46%,
+    transparent 72%
+  );
+  opacity: 1;
+}
+
+.night-veil {
+  background: radial-gradient(
+    ellipse at center,
+    rgba(20, 16, 38, 0.78) 0%,
+    rgba(20, 16, 38, 0.42) 50%,
+    transparent 74%
+  );
+  opacity: 0;
+}
+
+.night-sky {
+  opacity: 0;
+  background:
+    radial-gradient(ellipse 32% 28% at 18% 20%, rgba(206, 198, 240, 0.2), transparent 68%),
+    radial-gradient(ellipse 46% 36% at 82% 100%, rgba(64, 52, 112, 0.34), transparent 72%),
+    radial-gradient(ellipse 38% 30% at 8% 92%, rgba(42, 58, 104, 0.28), transparent 70%),
+    linear-gradient(180deg, #1c1e3a 0%, #241b3c 48%, #14182c 100%);
+}
+
+.star {
+  position: absolute;
+  border-radius: 9999px;
+  background: #f6f1e6;
+  box-shadow: 0 0 6px rgba(244, 236, 220, 0.4);
+  opacity: 0.45;
+}
+
+.moon-halo {
+  position: absolute;
+  inset: -50%;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle,
+    rgba(236, 228, 255, 0.55) 0%,
+    rgba(198, 188, 236, 0.16) 42%,
+    transparent 70%
+  );
+  filter: blur(5px);
+}
+
+.moon-anchor {
+  position: absolute;
+  left: max(7%, env(safe-area-inset-left));
+  top: max(18%, env(safe-area-inset-top));
+  width: 3rem;
+  height: 3rem;
+}
+
+.moon-button {
+  z-index: 36;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  pointer-events: none;
+  cursor: pointer;
+}
+
+[data-theme="night"] .moon-button {
+  pointer-events: auto;
+}
+
+.moon-glyph {
+  transition: transform 0.45s ease;
+}
+
+[data-theme="night"]:has(.moon-button:hover) .moon-glyph,
+[data-theme="night"]:has(.moon-button:focus-visible) .moon-glyph {
+  transform: scale(1.05);
+}
+
+@media (min-width: 640px) {
+  .moon-anchor {
+    left: max(12%, env(safe-area-inset-left));
+    top: max(13%, env(safe-area-inset-top));
+    width: 4rem;
+    height: 4rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .moon-anchor {
+    left: max(16%, env(safe-area-inset-left));
+    top: max(12%, env(safe-area-inset-top));
+    width: 5rem;
+    height: 5rem;
+  }
+}
+
+.shooting-star {
+  position: absolute;
+  top: 22%;
+  left: 100%;
+  width: 4.75rem;
+  height: 2px;
+  opacity: 0;
+  transform-origin: left center;
+  animation: shooting-star 1.28s cubic-bezier(0.37, 0.04, 0.22, 1) forwards;
+  will-change: transform, opacity;
+}
+
+.shooting-star-trail {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 250, 240, 0.96) 0%,
+    rgba(255, 236, 196, 0.5) 26%,
+    rgba(255, 226, 176, 0.08) 70%,
+    transparent 100%
+  );
+  box-shadow: 0 0 8px rgba(255, 232, 190, 0.35);
+}
+
+.shooting-star-head {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 4px;
+  height: 4px;
+  margin-left: -2px;
+  margin-top: -2px;
+  border-radius: 999px;
+  background: #fffaf2;
+  box-shadow:
+    0 0 6px 2px rgba(255, 248, 230, 0.95),
+    0 0 14px 4px rgba(236, 214, 168, 0.42);
+}
+
+@media (min-width: 640px) {
+  .shooting-star {
+    width: 7.25rem;
+  }
+
+  .shooting-star-head {
+    width: 5px;
+    height: 5px;
+    margin-left: -2px;
+    margin-top: -2.5px;
+  }
+}
+
+@keyframes shooting-star {
+  0% {
+    transform: translate3d(6%, -0.4rem, 0) rotate(-16deg);
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(calc(-100vw - 8rem), 10vh, 0) rotate(-16deg);
+    opacity: 0;
+  }
+}
+
+@keyframes shooting-star-still {
+  0% {
+    transform: translate3d(-42vw, 1.5rem, 0) rotate(-16deg);
+    opacity: 0;
+  }
+  22%,
+  68% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.flower-glow {
+  pointer-events: none;
+  position: absolute;
+  inset: -6%;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle,
+    transparent 34%,
+    rgba(220, 214, 255, 0.28) 52%,
+    transparent 72%
+  );
+  opacity: 0;
+}
+
+.flower-spark {
+  pointer-events: none;
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 9999px;
+  background: #f3ecff;
+  box-shadow: 0 0 6px rgba(226, 216, 255, 0.7);
+  opacity: 0;
+}
+
+.flower-spark-a {
+  top: 6%;
+  right: 10%;
+}
+
+.flower-spark-b {
+  bottom: 16%;
+  left: 4%;
+  width: 2px;
+  height: 2px;
+}
+
+.theme-toggle {
+  border: 1px solid #eadcc4;
+  background: rgba(255, 250, 244, 0.86);
+  color: #6d4e38;
+  box-shadow: 0 8px 22px rgba(120, 80, 80, 0.1);
+  transition:
+    background-color 1.5s ease,
+    border-color 1.5s ease,
+    color 1.5s ease,
+    transform 0.45s ease;
+}
+
+.theme-toggle:hover {
+  transform: scale(1.04);
+}
+
+.theme-icon {
+  color: inherit;
+}
+
+.theme-icon.is-shown {
+  opacity: 1;
+}
+
+.theme-icon.is-hidden {
+  opacity: 0;
+}
+
+[data-theme="night"] .night-sky,
+[data-theme="night"] .night-veil,
+[data-theme="night"] .flower-glow {
+  opacity: 1;
+}
+
+[data-theme="night"] .day-veil {
+  opacity: 0;
+}
+
+[data-theme="night"] .petal-layer {
+  opacity: 0.5;
+}
+
+[data-theme="night"] .garden-ink {
+  color: #f6ebef;
+}
+
+[data-theme="night"] .garden-ink-soft,
+[data-theme="night"] .garden-footer-pill {
+  color: #e7d5dc;
+}
+
+[data-theme="night"] .garden-note-ink {
+  color: #f3e4ea;
+}
+
+[data-theme="night"] .garden-line {
+  background-color: #cbb892;
+}
+
+[data-theme="night"] .garden-note {
+  background-color: rgba(30, 26, 52, 0.78);
+  border-color: rgba(214, 196, 168, 0.38);
+}
+
+[data-theme="night"] .garden-footer-pill {
+  background-color: rgba(14, 12, 28, 0.62);
+}
+
+[data-theme="night"] .theme-toggle {
+  border-color: rgba(214, 196, 168, 0.38);
+  background: rgba(28, 24, 48, 0.82);
+  color: #f4ecd8;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
+}
+
+[data-theme="night"] .star {
+  animation-name: star-twinkle;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+[data-theme="night"] .flower-spark {
+  animation-name: star-twinkle;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-duration: 3.8s;
+}
+
+[data-theme="night"] .flower-spark-b {
+  animation-delay: 1.5s;
+}
+
+@keyframes star-twinkle {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.95;
+  }
+}
+
+/* Ateş böcekleri yalnızca gece katmanı görünürken uçar. */
+.firefly-layer {
+  opacity: 0;
+}
+
+.firefly {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+.firefly-glow {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--size);
+  height: var(--size);
+  margin-left: calc(var(--size) / -2);
+  margin-top: calc(var(--size) / -2);
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle,
+    #fff6d4 0%,
+    #f2c65e 42%,
+    rgba(232, 168, 64, 0.18) 68%,
+    transparent 72%
+  );
+  box-shadow:
+    0 0 6px 2px rgba(255, 214, 120, 0.72),
+    0 0 16px 6px rgba(242, 176, 72, 0.32);
+  opacity: 0.35;
+}
+
+[data-theme="night"] .firefly-layer {
+  opacity: 1;
+  transition-duration: 1.7s;
+}
+
+[data-theme="night"] .firefly {
+  animation-name: firefly-drift;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+[data-theme="night"] .firefly-glow {
+  animation-name: firefly-glow;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes firefly-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  25% {
+    transform: translate3d(var(--dx1), var(--dy1), 0);
+  }
+  50% {
+    transform: translate3d(var(--dx2), var(--dy2), 0);
+  }
+  75% {
+    transform: translate3d(var(--dx3), var(--dy3), 0);
+  }
+}
+
+@keyframes firefly-glow {
+  0%,
+  100% {
+    opacity: 0.22;
+  }
+  45% {
+    opacity: 1;
+  }
+  72% {
+    opacity: 0.4;
+  }
+}
+
+html[data-lite="true"] .firefly-desktop {
+  display: none;
+}
+
+html[data-lite="true"] .firefly-glow {
+  box-shadow: 0 0 6px 2px rgba(255, 214, 120, 0.5);
+}
+
+html[data-lite="true"] .shooting-star-trail {
+  box-shadow: none;
+}
+
+html[data-lite="true"] .shooting-star-head {
+  box-shadow: 0 0 6px 1px rgba(255, 248, 230, 0.75);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .garden-ink,
+  .garden-ink-soft,
+  .garden-note-ink,
+  .garden-line,
+  .garden-note,
+  .garden-footer-pill,
+  .day-veil,
+  .night-veil,
+  .night-sky,
+  .flower-glow,
+  .theme-icon,
+  .theme-toggle,
+  .petal-layer,
+  .firefly-layer,
+  .moon-glyph {
+    transition: none;
+  }
+
+  .theme-toggle:hover,
+  [data-theme="night"]:has(.moon-button:hover) .moon-glyph,
+  [data-theme="night"]:has(.moon-button:focus-visible) .moon-glyph {
+    transform: none;
+  }
+
+  .shooting-star {
+    animation-name: shooting-star-still;
+    animation-duration: 1.05s;
+  }
+
+  [data-theme="night"] .star,
+  [data-theme="night"] .flower-spark {
+    animation: none;
+    opacity: 0.72;
+  }
+
+  [data-theme="night"] .firefly,
+  [data-theme="night"] .firefly-glow {
+    animation: none;
+  }
+
+  [data-theme="night"] .firefly-glow {
+    opacity: 0.55;
+  }
+
+  .firefly-desktop {
+    display: none;
+  }
 }
